@@ -22,8 +22,6 @@ typedef struct {
     char startingDate[DATE_LEN];
 } Person;
 
-/* ── helpers ── */
-
 void clearBuffer(void) {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
@@ -46,14 +44,12 @@ void printHeader(void) {
     printDivider();
 }
 
-/* Encode one record as a single CSV line */
 void encodeLine(const Person *p, char *line) {
     sprintf(line, "%s|%s|%s|%s|%s|%s|%s\n",
             p->nationalID, p->names, p->gender,
             p->phone, p->cell, p->village, p->startingDate);
 }
 
-/* Decode a CSV line into a Person struct; returns 1 on success */
 int decodeLine(const char *line, Person *p) {
     char tmp[MAX_LINE];
     strncpy(tmp, line, MAX_LINE - 1);
@@ -94,8 +90,6 @@ void printPerson(const Person *p, int idx) {
     printf("  Starting Date : %s\n", p->startingDate);
 }
 
-/* ── CRUD operations ── */
-
 void addRecord(void) {
     printDivider();
     printf("  ADD NEW UBUDEHE RECORD\n");
@@ -110,7 +104,6 @@ void addRecord(void) {
     readString("  Village       : ", p.village,        VILLAGE_LEN);
     readString("  Starting Date : ", p.startingDate,   DATE_LEN);
 
-    /* Check for duplicate ID */
     FILE *fp = fopen(FILE_NAME, "r");
     if (fp) {
         char line[MAX_LINE];
@@ -177,7 +170,6 @@ void editRecord(void) {
     FILE *fp = fopen(FILE_NAME, "r");
     if (!fp) { printf("\n  [!] No records file found.\n\n"); return; }
 
-    /* Load all records into memory */
     Person records[1000];
     int total = 0;
     char line[MAX_LINE];
@@ -223,7 +215,6 @@ void editRecord(void) {
 
     records[found] = updated;
 
-    /* Rewrite file */
     fp = fopen(FILE_NAME, "w");
     if (!fp) { perror("  [!] Cannot write file"); return; }
     for (int i = 0; i < total; i++) {
@@ -280,7 +271,6 @@ void deleteRecord(void) {
         return;
     }
 
-    /* Shift records to remove the deleted one */
     for (int i = found; i < total - 1; i++)
         records[i] = records[i + 1];
     total--;
@@ -296,8 +286,6 @@ void deleteRecord(void) {
 
     printf("\n  [-] Record deleted successfully.\n\n");
 }
-
-/* ── main menu ── */
 
 int main(void) {
     int choice;
